@@ -12,12 +12,12 @@ int lifeX=10, lifeY=10, lifeGap=70;
 
 int block =80;
 int firstStone=8, secondStone=16, thirdStone=24, stone1X, stone1Y, stone2X, stone2Y;
+int bgMove;
 
 float newTime;
 float lastTime;
 boolean right =false, left =false, down =false, up =false;
 
-float soilBgY;
 
 PImage title, gameover, startNormal, startHovered, restartNormal, restartHovered;
 PImage bg, soil8x24;
@@ -65,7 +65,7 @@ void setup() {
 
   lastTime=millis();
   frameRate(60);
-  soilBgY=block*2;
+  bgMove=0;
 }
 
 void draw() {
@@ -115,15 +115,20 @@ void draw() {
     strokeWeight(5);
     fill(253, 184, 19);
     ellipse(590, 50, 120, 120);
-
+    
+    
+    
+    pushMatrix ( );
+    translate ( 0, block*2-GRASS_HEIGHT-bgMove);
     // Grass
     fill(124, 204, 25);
     noStroke();
-    rect(0, 160 - GRASS_HEIGHT, width, GRASS_HEIGHT);
+    rect(0, 0, width, GRASS_HEIGHT);
+    popMatrix();
 
     // Soil - REPLACE THIS PART WITH YOUR LOOP CODE!
     pushMatrix ( );
-    translate ( 0, block*2 );
+    translate ( 0, block*2-bgMove );
     //Soil
     for (int i=0; i<block*8; i+=80) {
       for (int j=0; j<block*4; j+=80) {
@@ -150,7 +155,7 @@ void draw() {
 
     //Stone1
     pushMatrix ( );
-    translate ( 0, block*2 );
+    translate ( 0, block*2-bgMove);
     stone1X = 0;
     stone1Y = 0;
     for (int i=0; i<block*8; i++) {
@@ -162,7 +167,7 @@ void draw() {
 
     //Stone2
     pushMatrix ( );
-    translate ( 0, block*10 );
+    translate ( 0, block*10-bgMove );
     for (int i=-block; i<block*8; i+=block*4) {
       for (int j=80; j<block*3; j+=80) {
         image(stone1Img, i, j);
@@ -187,7 +192,7 @@ void draw() {
 
     //Stone3
     pushMatrix ( );
-    translate ( 0, block*18 );
+    translate ( 0, block*18-bgMove );
     for (int i=block; i<block*8; i+=block*3) {
       for (int j=0; j<block*8; j+=block*3) {
         image(stone1Img, i, j);
@@ -210,7 +215,9 @@ void draw() {
       }
     }
     popMatrix ( );
-
+    
+    pushMatrix ( );
+    translate ( 0,-bgMove );
     // Player
     if (left) {
       if ( groundhogMoveX>=groundhogX ) {
@@ -230,6 +237,7 @@ void draw() {
       if ( groundhogMoveY<=groundhogY ) {
         image( groundhogDownImg, groundhogX, groundhogMoveY );
         groundhogMoveY += (block/15);
+        bgMove += (block/15);
       } else {
         down = false;
       }
@@ -245,10 +253,15 @@ void draw() {
     } else if (groundhogY > height-groundhogIdleImg.height) {
       groundhogY = height-groundhogIdleImg.height;
     }
+    popMatrix ( );
+    
+    pushMatrix ( );
+    translate ( 0,-bgMove );
     // Health UI
     for (int i=10; i<10+lifeGap*playerHealth; i+=lifeGap) {
       image(lifeImg, i, lifeY);
     }
+    popMatrix ( );
     break;
 
   case GAME_OVER: // Gameover Screen
@@ -306,6 +319,9 @@ void keyPressed() {
         groundhogMoveY = groundhogY;
         down = true;
         groundhogY += block;
+        if(bgMove>=block*20){
+          bgMove=block*20;
+        }else{bgMove +=block;}
         lastTime=newTime;
       }
       break;
