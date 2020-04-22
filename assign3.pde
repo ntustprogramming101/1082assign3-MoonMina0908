@@ -12,7 +12,7 @@ int lifeX=10, lifeY=10, lifeGap=70;
 
 int block =80;
 int firstStone=8, secondStone=16, thirdStone=24, stone1X, stone1Y, stone2X, stone2Y;
-int bgMove;
+float bgMove;
 
 float newTime;
 float lastTime;
@@ -117,9 +117,11 @@ void draw() {
     ellipse(590, 50, 120, 120);
     
     
+    pushMatrix ( );
+    translate ( 0, -bgMove);
     
     pushMatrix ( );
-    translate ( 0, block*2-GRASS_HEIGHT-bgMove);
+    translate ( 0, block*2-GRASS_HEIGHT);
     // Grass
     fill(124, 204, 25);
     noStroke();
@@ -128,7 +130,7 @@ void draw() {
 
     // Soil - REPLACE THIS PART WITH YOUR LOOP CODE!
     pushMatrix ( );
-    translate ( 0, block*2-bgMove );
+    translate ( 0, block*2);
     //Soil
     for (int i=0; i<block*8; i+=80) {
       for (int j=0; j<block*4; j+=80) {
@@ -155,7 +157,7 @@ void draw() {
 
     //Stone1
     pushMatrix ( );
-    translate ( 0, block*2-bgMove);
+    translate ( 0, block*2);
     stone1X = 0;
     stone1Y = 0;
     for (int i=0; i<block*8; i++) {
@@ -167,7 +169,7 @@ void draw() {
 
     //Stone2
     pushMatrix ( );
-    translate ( 0, block*10-bgMove );
+    translate ( 0, block*10);
     for (int i=-block; i<block*8; i+=block*4) {
       for (int j=80; j<block*3; j+=80) {
         image(stone1Img, i, j);
@@ -192,7 +194,7 @@ void draw() {
 
     //Stone3
     pushMatrix ( );
-    translate ( 0, block*18-bgMove );
+    translate ( 0, block*18);
     for (int i=block; i<block*8; i+=block*3) {
       for (int j=0; j<block*8; j+=block*3) {
         image(stone1Img, i, j);
@@ -216,8 +218,6 @@ void draw() {
     }
     popMatrix ( );
     
-    pushMatrix ( );
-    translate ( 0,-bgMove );
     // Player
     if (left) {
       if ( groundhogMoveX>=groundhogX ) {
@@ -237,31 +237,32 @@ void draw() {
       if ( groundhogMoveY<=groundhogY ) {
         image( groundhogDownImg, groundhogX, groundhogMoveY );
         groundhogMoveY += (block/15);
+        bgMove-=5/15;
         bgMove += (block/15);
+        if(bgMove>=block*20){
+          bgMove=block*20;
+        }
       } else {
         down = false;
       }
     } else {
       image( groundhogIdleImg, groundhogX, groundhogY );
     }
-
+    popMatrix ( );
     //boundary check
     if (groundhogX>width- groundhogIdleImg.width) {
       groundhogX=width- groundhogIdleImg.width;
     } else if (groundhogX<0) {
       groundhogX = 0;
-    } else if (groundhogY > height-groundhogIdleImg.height) {
-      groundhogY = height-groundhogIdleImg.height;
+    } 
+    else if (groundhogY > block*26-groundhogIdleImg.height) {
+      groundhogY = block*26- groundhogIdleImg.height;
     }
-    popMatrix ( );
     
-    pushMatrix ( );
-    translate ( 0,-bgMove );
     // Health UI
     for (int i=10; i<10+lifeGap*playerHealth; i+=lifeGap) {
       image(lifeImg, i, lifeY);
     }
-    popMatrix ( );
     break;
 
   case GAME_OVER: // Gameover Screen
@@ -319,15 +320,15 @@ void keyPressed() {
         groundhogMoveY = groundhogY;
         down = true;
         groundhogY += block;
-        if(bgMove>=block*20){
-          bgMove=block*20;
-        }else{bgMove +=block;}
+        if(bgMove>0 && bgMove<1600){bgMove-=5;}
+        println(bgMove);
         lastTime=newTime;
       }
       break;
+      //case UP:groundhogY -=block; bgMove -=block;break;
     }
   }
-  /*case UP:groundhogY -=block; break;*/
+  
   // DO NOT REMOVE OR EDIT THE FOLLOWING SWITCH/CASES
   switch(key) {
   case 'w':
