@@ -238,7 +238,7 @@ void draw() {
         image( groundhogDownImg, groundhogX, groundhogMoveY );
         groundhogMoveY += (block/15);
         //bgMove-=5/15;
-        if(bgMove>=0 && bgMove<1600){bgMove += (block/15);}
+        if(bgMove>=0 && bgMove<1600){bgMove += floor(block/15);}
         if(bgMove>=block*20){
           bgMove=block*20;
         }
@@ -321,7 +321,7 @@ void keyPressed() {
         down = true;
         groundhogY += block;
         //if(bgMove>0 && bgMove<1600){bgMove-=5;}
-        println(bgMove);
+        //println(bgMove);
         lastTime=newTime;
       }
       break;
