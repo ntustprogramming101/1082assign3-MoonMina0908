@@ -320,8 +320,8 @@ void keyPressed() {
         groundhogMoveY = groundhogY;
         down = true;
         groundhogY += block;
-        if(bgMove>0 && bgMove<1600){bgMove-=5;}
-        //println(bgMove);
+        //if(bgMove>0 && bgMove<1600){bgMove-=5;}
+        println(bgMove);
         lastTime=newTime;
       }
       break;
